@@ -1,0 +1,130 @@
+﻿@model FamilyBudget.WebServer.Data.Models.FamilyDto
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .negative {
+            color: red; /* Light red */
+        }
+
+        .positive {
+            color: green; /* Light green */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <p class="fs-2"><strong>Name:</strong> @Model.Name</p>
+                    <p class="fs-2"><strong>Balance:</strong> @Model.Balance</p>
+                </div>
+                <div>
+                    <h2>Members:</h2>
+                    <ul class="list-group">
+                        @foreach (var member in Model.Users)
+                        {
+                            <li class="list-group-item">
+                                @member.Email @if(User.Identity.Name == Model.Users.First().Email && Model.Users.Any())
+                                {
+                                    <form method="post" asp-controller="Families" asp-action="RemoveMember" asp-route-id="@Model.Id">
+                                        <input type="hidden" name="memberId" value="@member.Id" />
+                                        <input type="submit" value="Remove" />
+                                    </form>
+                                }
+                            </li> 
+                        }
+                    </ul>
+                    <p>
+                        <button type="button" onclick="location.href='@Url.Action("AddMember", "Families", new { id = Model.Id })'" class="btn btn-outline-success mt-2">Add member</button>
+                    </p>
+                </div>
+            </div>
+            <div class="col">
+                <div id="chart1"></div>
+                <p>
+                    <button type="button" onclick="location.href='@Url.Action("GenerateReport", "Families", new { id = Model.Id })'" class="btn btn-outline-success">Export report</button>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <h2>Purchase History</h2>
+        <p>
+            <button type="button" onclick="location.href='@Url.Action("CreatePurchase", "Families", new { id = Model.Id })'" class="btn btn-outline-success">Create Purchase</button>
+        </p>
+        @if (Model.Purchases != null && Model.Purchases.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var purchase in Model.Purchases)
+                    {
+                        <tr class="@((purchase.Price < 0) ? "negative" : "positive")">
+                            <td>@purchase.FamilyMemberName</td>
+                            <td>@purchase.Name</td>
+                            <td>@Math.Abs(purchase.Price)</td>
+                            <td>@purchase.Date.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No purchases found.</p>
+        }
+    </div>
+</body>
+</html>
+@section scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var jsonData = @Html.Raw(Json.Serialize(Model.Purchases.GroupBy(purchase => purchase.Date.Date).Select(g => new { date = g.Key, balance = g.Sum(p => p.Price) })));
+
+            console.log(jsonData);
+
+            // Convert Date string to Date object
+            jsonData.forEach((item) => {
+                item.Date = new Date(item.date);
+            });
+
+            console.log(jsonData);
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'Date');
+            data.addColumn('number', 'Balance');
+
+            // Populate data table
+            jsonData.forEach(function (item) {
+                data.addRow([item.Date, item.balance]);
+            });
+            console.log(data);
+            var options = {
+                title: 'Balance Flow',
+                curveType: 'function',
+                legend: { position: 'Price' },
+                width: 500,
+                height: 400
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart1'));
+            chart.draw(data, options);
+
+        }
+    </script>
+}

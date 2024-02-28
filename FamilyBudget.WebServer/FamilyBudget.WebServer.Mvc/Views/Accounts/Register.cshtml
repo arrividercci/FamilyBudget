@@ -1,0 +1,48 @@
+﻿@model FamilyBudget.WebServer.Mvc.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register"; // Adjusted title to Ukrainian
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center">Sign up</h1>
+
+            <form method="post" asp-controller="Accounts" asp-action="Register">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label><br />
+                    <input class="form-control" asp-for="Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label><br />
+                    <input class="form-control" asp-for="Password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PasswordConfirm" class="control-label"></label><br />
+                    <input class="form-control" asp-for="PasswordConfirm" />
+                    <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Sign up</button>
+                </div>
+            </form>
+            <div class="form-group">
+                Have an account? <a asp-action="Login">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom styles to center the form and make it as wide as its current size */
+    .form-group{
+        margin-top: 15px;
+    }
+    .container {
+        margin-top: 50px; /* Adjust as needed */
+    }
+</style>

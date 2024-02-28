@@ -1,0 +1,6 @@
+@FamilyBudget.WebServer.ReportService_HostAddress = http://localhost:5115
+
+GET {{FamilyBudget.WebServer.ReportService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
