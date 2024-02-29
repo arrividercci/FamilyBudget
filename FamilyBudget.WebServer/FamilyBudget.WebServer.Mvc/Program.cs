@@ -14,6 +14,12 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IFamilyRepository, FamilyRepository>();
 builder.Services.AddScoped<IRabbitMQService, RabitMQService>();
 
+var rabbitMqConfig = builder.Configuration
+    .GetSection("RabbitMqConfiguration")
+    .Get<RabbitMqConfiguration>();
+
+builder.Services.AddSingleton(rabbitMqConfig);
+
 builder.Services.AddDbContext<FamilyBudgetDbContext>((serviceProvider, dbContextOptionsBuilder) =>
 {
     dbContextOptionsBuilder.UseNpgsql(

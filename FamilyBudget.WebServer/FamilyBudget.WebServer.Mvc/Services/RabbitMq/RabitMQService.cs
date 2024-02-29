@@ -6,6 +6,15 @@ namespace FamilyBudget.WebServer.Mvc.Services.RabbitMq
 {
     public class RabitMQService : IRabbitMQService
     {
+        private string HostName;
+        private string Queue;
+
+        public RabitMQService(RabbitMqConfiguration rabbitMqConfig)
+        {
+            this.HostName = rabbitMqConfig.HostName;
+            this.Queue = rabbitMqConfig.Queue;
+        }
+
         public void SendMessage(object obj)
         {
             var message = JsonSerializer.Serialize(obj);

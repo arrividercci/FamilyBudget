@@ -25,7 +25,7 @@ namespace FamilyBudget.WebServer.ReportService.Services.Email
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("your-email@example.com"),
+                From = new MailAddress(_emailConfig.From),
                 Subject = "Family Budget report",
                 Body = message,
                 IsBodyHtml = true

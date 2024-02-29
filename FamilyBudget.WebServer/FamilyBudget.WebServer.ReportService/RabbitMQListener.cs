@@ -18,13 +18,13 @@ namespace FamilyBudget.WebServer.ReportService
         private IConnection _connection;
         private IModel _channel;
         private IServiceScopeFactory serviceScopeFactory;
-        public RabbitMQListener(IServiceScopeFactory serviceScopeFactory)
+        public RabbitMQListener(IServiceScopeFactory serviceScopeFactory, RabbitMqConfiguration rabbitMqConfig)
         {
             this.serviceScopeFactory = serviceScopeFactory;
-            var factory = new ConnectionFactory { HostName = "localhost" };
+            var factory = new ConnectionFactory { HostName = rabbitMqConfig.HostName };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: "MyQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueDeclare(queue: rabbitMqConfig.Queue, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

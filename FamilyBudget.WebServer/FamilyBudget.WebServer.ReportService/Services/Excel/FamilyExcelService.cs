@@ -16,7 +16,7 @@ namespace FamilyBudget.WebServer.ReportService.Services.Excel
             int row = 2;
             foreach (var purchase in model.Purchases)
             {
-                sheet.Cells[$"B{row}"].PutValue(purchase.FamilyMemberName);
+                sheet.Cells[$"A{row}"].PutValue(purchase.FamilyMemberName);
                 sheet.Cells[$"B{row}"].PutValue(purchase.Name);
                 sheet.Cells[$"C{row}"].PutValue(purchase.Price);
                 sheet.Cells[$"D{row}"].PutValue(purchase.Date.ToShortDateString());
