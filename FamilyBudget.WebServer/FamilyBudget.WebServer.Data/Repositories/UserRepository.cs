@@ -30,5 +30,14 @@ namespace FamilyBudget.WebServer.Data.Repositories
 
             return user;
         }
+
+        public async Task RemovePurchase(User user, int purchaseId)
+        {
+            var purchase = user.Purchases.SingleOrDefault(purchase => purchase.Id == purchaseId);
+
+            user.Purchases.Remove(purchase);
+
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -22,6 +22,12 @@ namespace FamilyBudget.WebServer.ReportService.Services.Excel
                 sheet.Cells[$"D{row}"].PutValue(purchase.Date.ToShortDateString());
                 row++;
             }
+
+            int chartIndex = sheet.Charts.Add(Aspose.Cells.Charts.ChartType.ColumnStacked, 0, 5, 20, 15);
+
+            Aspose.Cells.Charts.Chart chart = sheet.Charts[chartIndex];
+
+            chart.SetChartDataRange($"A1:C{model.Purchases.Count}", true);
             return wb;
         }
     }

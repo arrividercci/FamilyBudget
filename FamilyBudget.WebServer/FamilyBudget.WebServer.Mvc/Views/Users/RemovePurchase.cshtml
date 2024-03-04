@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Remove Purchase";
+}
+
+<h1>Remove Purchase</h1>
+
+<form asp-action="RemovePurchase" method="post">
+    <input type="hidden" asp-for="@ViewData["purchaseId"]" />
+    <p>Are you sure you want to remove this purchase?</p>
+    <button type="submit">Remove</button>
+</form>

@@ -17,7 +17,7 @@ namespace FamilyBudget.WebServer.Mvc.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            
+
             var user = await userRepository.GetUserAsync(userId);
 
             return View(user.ToModel());
@@ -43,7 +43,7 @@ namespace FamilyBudget.WebServer.Mvc.Controllers
                 var purchase = new Purchase()
                 {
                     Name = purchaseView.Name,
-                    Price = purchaseView.IsReplenishment? purchaseView.Price : -purchaseView.Price,
+                    Price = purchaseView.IsReplenishment ? purchaseView.Price : -purchaseView.Price,
                     Date = DateTime.UtcNow
                 };
 
@@ -53,7 +53,7 @@ namespace FamilyBudget.WebServer.Mvc.Controllers
             else
             {
                 return View(purchaseView);
-            } 
+            }
         }
 
         [HttpGet]
@@ -70,6 +70,28 @@ namespace FamilyBudget.WebServer.Mvc.Controllers
             };
             var serializedReport = JsonSerializer.Serialize(userReport);
             rabbitMQService.SendMessage(serializedReport);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("RemovePurchase/{id}")]
+        [Authorize]
+        public IActionResult RemovePurchase(int id)
+        {
+            ViewData["purchaseId"] = id;
+            
+            return View();
+        }
+
+        [HttpPost("RemovePurchase/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ConfirmRemovePurchase(int id)
+        {
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await userRepository.GetUserAsync(userId);
+            
+            await userRepository.RemovePurchase(user, id);
+
             return RedirectToAction("Index");
         }
     }

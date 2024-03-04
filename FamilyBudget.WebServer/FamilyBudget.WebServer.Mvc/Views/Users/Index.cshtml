@@ -23,10 +23,13 @@
                 </div>
             </div>
             <div class="col">
-                <div id="chart1"></div>
-                <p>
-                    <button type="button" onclick="location.href='@Url.Action("GenerateReport", "Users")'" class="btn btn-outline-success">Export report</button>
-                </p>
+                @if (Model.Purchases != null && Model.Purchases.Any())
+                {
+                    <div id="chart1"></div>
+                    <p>
+                        <button type="button" onclick="location.href='@Url.Action("GenerateReport", "Users")'" class="btn btn-outline-success">Export report</button>
+                    </p>
+                }
             </div>
         </div>
     </div>
@@ -44,6 +47,7 @@
                         <th>Name</th>
                         <th>Price</th>
                         <th>Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +57,9 @@
                             <td>@purchase.Name</td>
                             <td>@Math.Round(Math.Abs(purchase.Price), 2)</td>
                             <td>@purchase.Date.ToShortDateString()</td>
+                            <td>
+                                <button type="button" onclick="location.href='@Url.Action("RemovePurchase", "Users", new { id = purchase.Id })'" class="btn btn-outline-danger">Remove</button>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -72,26 +79,27 @@
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-            var jsonData = @Html.Raw(Json.Serialize(Model.Purchases.GroupBy(purchase => purchase.Date.Date).Select(g => new {date = g.Key, balance = g.Sum(p => p.Price)})));
+            var jsonData = @Html.Raw(Json.Serialize(Model.Purchases.GroupBy(purchase => purchase.Date.Date).Select(g => new {date = g.Key, balance = g.Sum(p => p.Price)}).OrderBy(x => x.date)));
 
             console.log(jsonData);
 
-            // Convert Date string to Date object
             jsonData.forEach((item) => {
                 item.Date = new Date(item.date);
             });
-
-            console.log(jsonData);
 
             var data = new google.visualization.DataTable();
             data.addColumn('date', 'Date');
             data.addColumn('number', 'Balance');
 
-            // Populate data table
-            jsonData.forEach(function (item) {
-                data.addRow([item.Date, item.balance]);
-            });
-            console.log(data);
+            let balance = jsonData[0].balance;
+
+            data.addRow([jsonData[0].Date, jsonData[0].balance]);
+            
+            for (let i = 1; i < jsonData.length; i++) {
+                balance += jsonData[i].balance;
+                data.addRow([jsonData[i].Date, balance]);
+            }
+            
             var options = {
                 title: 'Balance Flow',
                 curveType: 'function',

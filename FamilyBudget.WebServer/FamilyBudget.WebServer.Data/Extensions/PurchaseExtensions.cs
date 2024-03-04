@@ -20,6 +20,7 @@ namespace FamilyBudget.WebServer.Data.Extensions
             {
                 return new PurchaseDto()
                 {
+                    Id = purchase.Id,
                     Date = purchase.Date,
                     Name = purchase.Name,
                     Price = purchase.Price,
@@ -37,6 +38,7 @@ namespace FamilyBudget.WebServer.Data.Extensions
             {
                 return new PurchaseForFamilyDto()
                 {
+                    Id = purchase.Id,
                     Date = purchase.Date,
                     Name = purchase.Name,
                     Price = purchase.Price,

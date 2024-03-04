@@ -12,5 +12,6 @@ namespace FamilyBudget.WebServer.Data.Repositories
         public Task<User?> GetUserAsync(string id);
         public Task<User?> GetUserByEmailAsync(string email);
         public Task CreatePurchaseAsync(User user, Purchase purchase);
+        public Task RemovePurchase(User user, int purchaseId);
     }
 }
